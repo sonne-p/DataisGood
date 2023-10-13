@@ -1,0 +1,20 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+quotes = []
+
+for i in range(1,11):
+    url = f"https://quotes.toscrape.com/page/{i}/"
+    response = requests.get(url)
+    response = response.content
+    soup = BeautifulSoup(response, 'html.parser')
+    ol = soup.find_all(class_='quote')
+    for o_l in ol:
+        quotes.append([
+                    o_l.find(class_="text").get_text(),
+                    o_l.find(class_="author").get_text(),
+                    o_l.find(class_="keywords").get('content')
+                    ])
+df = pd.DataFrame(quotes,columns = ['Quote','Author','Tags'])
+df.to_excel("Assignment2.xlsx")
